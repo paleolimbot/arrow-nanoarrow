@@ -17,6 +17,28 @@
   under the License.
 -->
 
-# nanoarrow (development version)
+# nanoarrow 0.2.0
 
-* Added a `NEWS.md` file to track changes to the package.
+## New features
+
+- Improve printing and conversion of buffers (#208)
+- Add `enum ArrowType buffer_data_type` member to `struct ArrowLayout` (#207)
+- Implement ListChildOffset function (#197)
+- Add ability to deterministically run a finalizer on an array stream (#196)
+- Union array support (#195)
+- Add ArrowArrayStream implementation to support keeping a dependent object in 
+  scope (#194)
+- Add `as_nanoarrow_array()` implementation that does not fall back on `arrow::as_arrow_array()` everywhere (#108)
+- Create nanoarrow_array objects from buffers (#105)
+- Implement infer schema methods (#104)
+- Create and modify nanoarrow_schema objects (#101)
+
+## Bugfixes
+
+- Fix `convert_array_stream()` for non-record batch stream with zero batches 
+  (#212)
+- clear `release` in `EmptyArrayStream::release_wrapper` (#204)
+- Release streams when calling `as.vector()` or `as.data.frame()` (#202)
+- Don't invoke undefined behaviour in conversions to/from Arrow (#167)
+- Use strict prototypes in all internal C functions (#151)
+- Don't memcpy NULL when converting buffer to raw (#149)
