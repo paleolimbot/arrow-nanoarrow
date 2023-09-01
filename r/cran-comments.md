@@ -1,6 +1,5 @@
 
-Updates the nanoarrow R bindings to use the latest version of the nanoarrow
-C library.
+Update to fix the errors listed on the CRAN check page.
 
 ## R CMD check results
 
