@@ -17,6 +17,10 @@
   under the License.
 -->
 
+# nanoarrow 0.2.0-1
+
+- Don't link to arrow package R6 class pages (#269)
+
 # nanoarrow 0.2.0
 
 ## New features
