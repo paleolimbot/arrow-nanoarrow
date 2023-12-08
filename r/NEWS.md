@@ -17,6 +17,10 @@
   under the License.
 -->
 
+# nanoarrow 0.3.0.1
+
+- Ensure wrapper array stream eagerly releases the wrapped array stream (#333).
+
 # nanoarrow 0.3.0
 
 - Use classed warnings to signal that a lossy conversion occurred

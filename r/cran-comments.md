@@ -1,6 +1,5 @@
 
-Updates the nanoarrow R bindings to use the latest version of the nanoarrow
-C library.
+Updates the nanoarrow R bindings with a critical fix from upstream nanoarrow.
 
 ## R CMD check results
 
