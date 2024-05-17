@@ -1,560 +1,154 @@
-# Licensed to the Apache Software Foundation (ASF) under one
-# or more contributor license agreements.  See the NOTICE file
-# distributed with this work for additional information
-# regarding copyright ownership.  The ASF licenses this file
-# to you under the Apache License, Version 2.0 (the
-# "License"); you may not use this file except in compliance
-# with the License.  You may obtain a copy of the License at
-#
-#   http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing,
-# software distributed under the License is distributed on an
-# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-# KIND, either express or implied.  See the License for the
-# specific language governing permissions and limitations
-# under the License.
-
-import _cython_3_0_10
-import enum
-import types
-from _typeshed import Incomplete
-from typing import Callable, ClassVar
-
-DEVICE_CPU: Device
-__reduce_cython__: _cython_3_0_10.cython_function_or_method
-__setstate_cython__: _cython_3_0_10.cython_function_or_method
-__test__: dict
-assert_type_equal: _cython_3_0_10.cython_function_or_method
-c_version: _cython_3_0_10.cython_function_or_method
-get_pyobject_buffer_count: _cython_3_0_10.cython_function_or_method
-sys_byteorder: str
-
-class CArray:
-    __pyx_vtable__: ClassVar[PyCapsule] = ...
-    buffers: Incomplete
-    children: Incomplete
-    device_id: Incomplete
-    device_type: Incomplete
-    device_type_id: Incomplete
-    dictionary: Incomplete
-    length: Incomplete
-    n_buffers: Incomplete
-    n_children: Incomplete
-    null_count: Incomplete
-    offset: Incomplete
-    schema: Incomplete
-    @classmethod
-    def __init__(cls, *args, **kwargs) -> None:
-        """Create and return a new object.  See help(type) for accurate signature."""
-    @staticmethod
-    def allocate(*args, **kwargs): ...
-    def child(self, *args, **kwargs): ...
-    def is_valid(self, *args, **kwargs): ...
-    def view(self, *args, **kwargs): ...
-    def __arrow_c_array__(self, *args, **kwargs):
-        """
-        Get a pair of PyCapsules containing a C ArrowArray representation of the object.
-
-        Parameters
-        ----------
-        requested_schema : PyCapsule | None
-            A PyCapsule containing a C ArrowSchema representation of a requested
-            schema. Not supported.
-
-        Returns
-        -------
-        Tuple[PyCapsule, PyCapsule]
-            A pair of PyCapsules containing a C ArrowSchema and ArrowArray,
-            respectively.
-        """
-    def __getitem__(self, index):
-        """Return self[key]."""
-    def __len__(self) -> int:
-        """Return len(self)."""
-    def __reduce__(self): ...
-
-class CArrayBuilder:
-    @classmethod
-    def __init__(cls, *args, **kwargs) -> None:
-        """Create and return a new object.  See help(type) for accurate signature."""
-    @staticmethod
-    def allocate(*args, **kwargs): ...
-    def append_bytes(self, *args, **kwargs): ...
-    def append_strings(self, *args, **kwargs): ...
-    def finish(self, *args, **kwargs): ...
-    def init_from_schema(self, *args, **kwargs): ...
-    def init_from_type(self, *args, **kwargs): ...
-    def is_empty(self, *args, **kwargs): ...
-    def resolve_null_count(self, *args, **kwargs): ...
-    def set_buffer(self, *args, **kwargs):
-        """Sets a buffer of this ArrowArray such the pointer at array->buffers[i] is
-        equal to buffer->data and such that the buffer's lifcycle is managed by
-        the array. If move is True, the input Python object that previously wrapped
-        the ArrowBuffer will be invalidated, which is usually the desired behaviour
-        if you built or imported a buffer specifically to build this array. If move
-        is False (the default), this function will a make a shallow copy via another
-        layer of Python object wrapping."""
-    def set_child(self, *args, **kwargs): ...
-    def set_length(self, *args, **kwargs): ...
-    def set_null_count(self, *args, **kwargs): ...
-    def set_offset(self, *args, **kwargs): ...
-    def start_appending(self, *args, **kwargs): ...
-    def __reduce__(self): ...
-
-class CArrayStream:
-    @classmethod
-    def __init__(cls, *args, **kwargs) -> None:
-        """Create and return a new object.  See help(type) for accurate signature."""
-    @staticmethod
-    def allocate(*args, **kwargs): ...
-    @staticmethod
-    def from_c_arrays(*args, **kwargs): ...
-    def get_next(self, *args, **kwargs):
-        """Get the next Array from this stream
-
-        Raises StopIteration when there are no more arrays in this stream.
-        """
-    def get_schema(self, *args, **kwargs):
-        """Get the schema associated with this stream"""
-    def is_valid(self, *args, **kwargs): ...
-    def release(self, *args, **kwargs): ...
-    def __arrow_c_stream__(self, *args, **kwargs):
-        """
-        Export the stream as an Arrow C stream PyCapsule.
-
-        Parameters
-        ----------
-        requested_schema : PyCapsule | None
-            A PyCapsule containing a C ArrowSchema representation of a requested
-            schema. Not supported.
-
-        Returns
-        -------
-        PyCapsule
-        """
-    def __enter__(self): ...
-    def __exit__(
-        self,
-        type: type[BaseException] | None,
-        value: BaseException | None,
-        traceback: types.TracebackType | None,
-    ): ...
-    def __iter__(self):
-        """Implement iter(self)."""
-    def __next__(self): ...
-    def __reduce__(self): ...
-
-class CArrayView:
-    buffers: Incomplete
-    children: Incomplete
-    dictionary: Incomplete
-    layout: Incomplete
-    length: Incomplete
-    n_buffers: Incomplete
-    n_children: Incomplete
-    null_count: Incomplete
-    offset: Incomplete
-    storage_type: Incomplete
-    storage_type_id: Incomplete
-    @classmethod
-    def __init__(cls, *args, **kwargs) -> None:
-        """Create and return a new object.  See help(type) for accurate signature."""
-    def buffer(self, *args, **kwargs): ...
-    def buffer_type(self, *args, **kwargs): ...
-    def child(self, *args, **kwargs): ...
-    @staticmethod
-    def from_array(*args, **kwargs): ...
-    @staticmethod
-    def from_schema(*args, **kwargs): ...
-    def __len__(self) -> int:
-        """Return len(self)."""
-    def __reduce__(self): ...
-
-class CArrowTimeUnit:
-    MICRO: ClassVar[int] = ...
-    MILLI: ClassVar[int] = ...
-    NANO: ClassVar[int] = ...
-    SECOND: ClassVar[int] = ...
-    @classmethod
-    def __init__(cls, *args, **kwargs) -> None:
-        """Create and return a new object.  See help(type) for accurate signature."""
-    def __reduce__(self): ...
-    def __reduce_cython__(self, *args, **kwargs): ...
-    def __setstate_cython__(self, *args, **kwargs): ...
-
-class CArrowType:
-    BINARY: ClassVar[int] = ...
-    BOOL: ClassVar[int] = ...
-    DATE32: ClassVar[int] = ...
-    DATE64: ClassVar[int] = ...
-    DECIMAL128: ClassVar[int] = ...
-    DECIMAL256: ClassVar[int] = ...
-    DENSE_UNION: ClassVar[int] = ...
-    DICTIONARY: ClassVar[int] = ...
-    DOUBLE: ClassVar[int] = ...
-    DURATION: ClassVar[int] = ...
-    EXTENSION: ClassVar[int] = ...
-    FIXED_SIZE_BINARY: ClassVar[int] = ...
-    FIXED_SIZE_LIST: ClassVar[int] = ...
-    FLOAT: ClassVar[int] = ...
-    HALF_FLOAT: ClassVar[int] = ...
-    INT16: ClassVar[int] = ...
-    INT32: ClassVar[int] = ...
-    INT64: ClassVar[int] = ...
-    INT8: ClassVar[int] = ...
-    INTERVAL_DAY_TIME: ClassVar[int] = ...
-    INTERVAL_MONTHS: ClassVar[int] = ...
-    INTERVAL_MONTH_DAY_NANO: ClassVar[int] = ...
-    LARGE_BINARY: ClassVar[int] = ...
-    LARGE_LIST: ClassVar[int] = ...
-    LARGE_STRING: ClassVar[int] = ...
-    LIST: ClassVar[int] = ...
-    MAP: ClassVar[int] = ...
-    NA: ClassVar[int] = ...
-    SPARSE_UNION: ClassVar[int] = ...
-    STRING: ClassVar[int] = ...
-    STRUCT: ClassVar[int] = ...
-    TIME32: ClassVar[int] = ...
-    TIME64: ClassVar[int] = ...
-    TIMESTAMP: ClassVar[int] = ...
-    UINT16: ClassVar[int] = ...
-    UINT32: ClassVar[int] = ...
-    UINT64: ClassVar[int] = ...
-    UINT8: ClassVar[int] = ...
-    UNINITIALIZED: ClassVar[int] = ...
-    @classmethod
-    def __init__(cls, *args, **kwargs) -> None:
-        """Create and return a new object.  See help(type) for accurate signature."""
-    def __reduce__(self): ...
-    def __reduce_cython__(self, *args, **kwargs): ...
-    def __setstate_cython__(self, *args, **kwargs): ...
-
-class CBuffer:
-    __pyx_vtable__: ClassVar[PyCapsule] = ...
-    data_type: Incomplete
-    data_type_id: Incomplete
-    element_size_bits: Incomplete
-    format: Incomplete
-    item_size: Incomplete
-    n_elements: Incomplete
-    size_bytes: Incomplete
-    @classmethod
-    def __init__(cls, *args, **kwargs) -> None:
-        """Create and return a new object.  See help(type) for accurate signature."""
-    def element(self, *args, **kwargs): ...
-    def elements(self, *args, **kwargs): ...
-    @staticmethod
-    def empty(*args, **kwargs): ...
-    @staticmethod
-    def from_pybuffer(*args, **kwargs): ...
-    def __buffer__(self, *args, **kwargs):
-        """Return a buffer object that exposes the underlying memory of the object."""
-    def __getitem__(self, index):
-        """Return self[key]."""
-    def __iter__(self):
-        """Implement iter(self)."""
-    def __len__(self) -> int:
-        """Return len(self)."""
-    def __reduce__(self): ...
-    def __release_buffer__(self, *args, **kwargs):
-        """Release the buffer object that exposes the underlying memory of the object."""
-
-class CBufferBuilder:
-    __pyx_vtable__: ClassVar[PyCapsule] = ...
-    capacity_bytes: Incomplete
-    format: Incomplete
-    size_bytes: Incomplete
-    @classmethod
-    def __init__(cls, *args, **kwargs) -> None:
-        """Create and return a new object.  See help(type) for accurate signature."""
-    def advance(self, *args, **kwargs):
-        """Manually increase :attr:`size_bytes` by ``additional_bytes``
-
-        This can be used after writing to the buffer using the buffer protocol
-        to ensure that :attr:`size_bytes` accurately reflects the number of
-        bytes written to the buffer.
-        """
-    def finish(self, *args, **kwargs):
-        """Finish building this buffer
-
-        Performs any steps required to finish building this buffer and
-        returns the result. Any behaviour resulting from calling methods
-        on this object after it has been finished is not currently
-        defined (but should not crash).
-        """
-    def reserve_bytes(self, *args, **kwargs):
-        """Ensure that the underlying buffer has space for ``additional_bytes``
-        more bytes to be written"""
-    def set_data_type(self, *args, **kwargs):
-        """Set the data type used to interpret elements in :meth:`write_elements`."""
-    def set_format(self, *args, **kwargs):
-        """Set the Python buffer format used to interpret elements in
-        :meth:`write_elements`.
-        """
-    def write(self, *args, **kwargs):
-        """Write bytes to this buffer
-
-        Writes the bytes of ``content`` without considering the element type of
-        ``content`` or the element type of this buffer.
-
-        This method returns the number of bytes that were written.
-        """
-    def write_elements(self, *args, **kwargs):
-        """ "Write an iterable of elements to this buffer
-
-        Writes the elements of iterable ``obj`` according to the binary
-        representation specified by :attr:`format`. This is currently
-        powered by ``struct.pack_into()`` except when building bitmaps
-        where an internal implementation is used.
-
-        This method returns the number of elements that were written.
-        """
-    def __buffer__(self, *args, **kwargs):
-        """Return a buffer object that exposes the underlying memory of the object."""
-    def __reduce__(self): ...
-    def __release_buffer__(self, *args, **kwargs):
-        """Release the buffer object that exposes the underlying memory of the object."""
-
-class CBufferView:
-    __pyx_vtable__: ClassVar[PyCapsule] = ...
-    data_type: Incomplete
-    data_type_id: Incomplete
-    device: Incomplete
-    element_size_bits: Incomplete
-    format: Incomplete
-    item_size: Incomplete
-    n_elements: Incomplete
-    size_bytes: Incomplete
-    @classmethod
-    def __init__(cls, *args, **kwargs) -> None:
-        """Create and return a new object.  See help(type) for accurate signature."""
-    def copy(self, *args, **kwargs): ...
-    def copy_into(self, *args, **kwargs): ...
-    def element(self, *args, **kwargs): ...
-    def elements(self, *args, **kwargs): ...
-    def unpack_bits(self, *args, **kwargs): ...
-    def unpack_bits_into(self, *args, **kwargs): ...
-    def __buffer__(self, *args, **kwargs):
-        """Return a buffer object that exposes the underlying memory of the object."""
-    def __getitem__(self, index):
-        """Return self[key]."""
-    def __iter__(self):
-        """Implement iter(self)."""
-    def __len__(self) -> int:
-        """Return len(self)."""
-    def __reduce__(self): ...
-    def __release_buffer__(self, *args, **kwargs):
-        """Release the buffer object that exposes the underlying memory of the object."""
-
-class CDeviceArray:
-    array: Incomplete
-    device_id: Incomplete
-    device_type: Incomplete
-    device_type_id: Incomplete
-    schema: Incomplete
-    @classmethod
-    def __init__(cls, *args, **kwargs) -> None:
-        """Create and return a new object.  See help(type) for accurate signature."""
-    def view(self, *args, **kwargs): ...
-    def __arrow_c_array__(self, *args, **kwargs): ...
-    def __arrow_c_device_array__(self, *args, **kwargs): ...
-    def __reduce__(self): ...
-
-class CLayout:
-    buffer_data_type_id: Incomplete
-    child_size_elements: Incomplete
-    element_size_bits: Incomplete
-    n_buffers: Incomplete
-    @classmethod
-    def __init__(cls, *args, **kwargs) -> None:
-        """Create and return a new object.  See help(type) for accurate signature."""
-    def __reduce__(self): ...
-
-class CMaterializedArrayStream:
-    __pyx_vtable__: ClassVar[PyCapsule] = ...
-    arrays: Incomplete
-    n_arrays: Incomplete
-    schema: Incomplete
-    @classmethod
-    def __init__(cls, *args, **kwargs) -> None:
-        """Create and return a new object.  See help(type) for accurate signature."""
-    def array(self, *args, **kwargs): ...
-    def child(self, *args, **kwargs): ...
-    @staticmethod
-    def from_c_array(*args, **kwargs): ...
-    @staticmethod
-    def from_c_array_stream(*args, **kwargs): ...
-    @staticmethod
-    def from_c_arrays(*args, **kwargs): ...
-    def __arrow_c_stream__(self, *args, **kwargs): ...
-    def __getitem__(self, index):
-        """Return self[key]."""
-    def __iter__(self):
-        """Implement iter(self)."""
-    def __len__(self) -> int:
-        """Return len(self)."""
-    def __reduce__(self): ...
-
-class CSchema:
-    children: Incomplete
-    dictionary: Incomplete
-    flags: Incomplete
-    format: Incomplete
-    metadata: Incomplete
-    n_children: Incomplete
-    name: Incomplete
-    @classmethod
-    def __init__(cls, *args, **kwargs) -> None:
-        """Create and return a new object.  See help(type) for accurate signature."""
-    @staticmethod
-    def allocate(*args, **kwargs): ...
-    def child(self, *args, **kwargs): ...
-    def is_valid(self, *args, **kwargs): ...
-    def modify(self, *args, **kwargs): ...
-    def type_equals(self, *args, **kwargs): ...
-    def __arrow_c_schema__(self, *args, **kwargs):
-        """
-        Export to a ArrowSchema PyCapsule
-        """
-    def __deepcopy__(self): ...
-    def __reduce__(self): ...
-
-class CSchemaBuilder:
-    @classmethod
-    def __init__(cls, *args, **kwargs) -> None:
-        """Create and return a new object.  See help(type) for accurate signature."""
-    @staticmethod
-    def allocate(*args, **kwargs): ...
-    def allocate_children(self, *args, **kwargs): ...
-    def append_metadata(self, *args, **kwargs): ...
-    def child(self, *args, **kwargs): ...
-    def finish(self, *args, **kwargs): ...
-    def set_child(self, *args, **kwargs): ...
-    def set_dictionary(self, *args, **kwargs): ...
-    def set_dictionary_ordered(self, *args, **kwargs): ...
-    def set_flags(self, *args, **kwargs): ...
-    def set_format(self, *args, **kwargs): ...
-    def set_name(self, *args, **kwargs): ...
-    def set_nullable(self, *args, **kwargs): ...
-    def set_type(self, *args, **kwargs): ...
-    def set_type_date_time(self, *args, **kwargs): ...
-    def set_type_decimal(self, *args, **kwargs): ...
-    def set_type_fixed_size(self, *args, **kwargs): ...
-    def validate(self, *args, **kwargs): ...
-    def __reduce__(self): ...
-
-class CSchemaView:
-    _decimal_types: ClassVar[tuple] = ...
-    _fixed_size_types: ClassVar[tuple] = ...
-    _time_unit_types: ClassVar[tuple] = ...
-    _union_types: ClassVar[tuple] = ...
-    buffer_format: Incomplete
-    decimal_bitwidth: Incomplete
-    decimal_precision: Incomplete
-    decimal_scale: Incomplete
-    dictionary_ordered: Incomplete
-    extension_metadata: Incomplete
-    extension_name: Incomplete
-    fixed_size: Incomplete
-    layout: Incomplete
-    map_keys_sorted: Incomplete
-    nullable: Incomplete
-    storage_type: Incomplete
-    storage_type_id: Incomplete
-    time_unit: Incomplete
-    time_unit_id: Incomplete
-    timezone: Incomplete
-    type: Incomplete
-    type_id: Incomplete
-    union_type_ids: Incomplete
-    @classmethod
-    def __init__(cls, *args, **kwargs) -> None:
-        """Create and return a new object.  See help(type) for accurate signature."""
-    def __reduce__(self): ...
-
-class Device:
-    device_id: Incomplete
-    device_type: Incomplete
-    device_type_id: Incomplete
-    @classmethod
-    def __init__(cls, *args, **kwargs) -> None:
-        """Create and return a new object.  See help(type) for accurate signature."""
-    @staticmethod
-    def resolve(*args, **kwargs): ...
-    def __reduce__(self): ...
-
-class DeviceType(enum.Enum):
-    __new__: ClassVar[Callable] = ...
-    CPU: ClassVar[DeviceType] = ...
-    CUDA: ClassVar[DeviceType] = ...
-    CUDA_HOST: ClassVar[DeviceType] = ...
-    CUDA_MANAGED: ClassVar[DeviceType] = ...
-    EXT_DEV: ClassVar[DeviceType] = ...
-    HEXAGON: ClassVar[DeviceType] = ...
-    METAL: ClassVar[DeviceType] = ...
-    ONEAPI: ClassVar[DeviceType] = ...
-    OPENCL: ClassVar[DeviceType] = ...
-    ROCM: ClassVar[DeviceType] = ...
-    ROCM_HOST: ClassVar[DeviceType] = ...
-    VPI: ClassVar[DeviceType] = ...
-    VULKAN: ClassVar[DeviceType] = ...
-    WEBGPU: ClassVar[DeviceType] = ...
-    _generate_next_value_: ClassVar[Callable] = ...
-    _member_map_: ClassVar[dict] = ...
-    _member_names_: ClassVar[list] = ...
-    _member_type_: ClassVar[type[object]] = ...
-    _unhashable_values_: ClassVar[list] = ...
-    _use_args_: ClassVar[bool] = ...
-    _value2member_map_: ClassVar[dict] = ...
-    _value_repr_: ClassVar[None] = ...
-
-class Error:
-    @classmethod
-    def __init__(cls, *args, **kwargs) -> None:
-        """Create and return a new object.  See help(type) for accurate signature."""
-    @staticmethod
-    def raise_error(*args, **kwargs):
-        """Raise a NanoarrowException without a message"""
-    @staticmethod
-    def raise_error_not_ok(*args, **kwargs): ...
-    def raise_message(self, *args, **kwargs):
-        """Raise a NanoarrowException from this message"""
-    def raise_message_not_ok(self, *args, **kwargs): ...
-    def __reduce__(self): ...
+def c_version():
+    """Return the nanoarrow C library version string"""
 
 class NanoarrowException(RuntimeError):
-    def __init__(self, *args, **kwargs) -> None: ...
+    """An error resulting from a call to the nanoarrow C library
 
-class NoneAwareWrapperIterator:
-    __pyx_vtable__: ClassVar[PyCapsule] = ...
-    @classmethod
-    def __init__(cls, *args, **kwargs) -> None:
-        """Create and return a new object.  See help(type) for accurate signature."""
-    def finish(self, *args, **kwargs):
-        """Obtain the total count, null count, and validity bitmap after
-        consuming this iterable."""
-    def reserve(self, *args, **kwargs): ...
-    def __iter__(self):
-        """Implement iter(self)."""
-    def __reduce__(self): ...
+    Calls to the nanoarrow C library and/or the Arrow C Stream interface
+    callbacks return an errno error code and sometimes a message with extra
+    detail. This exception wraps a RuntimeError to format a suitable message
+    and store the components of the original error.
+    """
+
+class Error:
+    """Memory holder for an ArrowError
+
+    ArrowError is the C struct that is optionally passed to nanoarrow functions
+    when a detailed error message might be returned. This class holds a C
+    reference to the object and provides helpers for raising exceptions based
+    on the contained message.
+    """
+
+class CArrowType:
+    """
+    Wrapper around ArrowType to provide implementations in Python access
+    to the values.
+
+    This could in theory use cpdef enum, but an initial attempt to do so
+    resulted Cython duplicating some function definitions. For now, we resort
+    to a more manual trampoline of values to make them accessible from
+    schema.py.
+    """
+
+class CArrowTimeUnit:
+    """
+    Wrapper around ArrowTimeUnit to provide implementations in Python access
+    to the values.
+    """
+
+class DeviceType(Enum):
+    """
+    An enumerator providing access to the device constant values
+    defined in the Arrow C Device interface. Unlike the other enum
+    accessors, this Python Enum is defined in Cython so that we can use
+    the bulit-in functionality to do better printing of device identifiers
+    for classes defined in Cython. Unlike the other enums, users don't
+    typically need to specify these (but would probably like them printed
+    nicely).
+    """
+
+class Device:
+    """ArrowDevice wrapper
+
+    The ArrowDevice structure is a nanoarrow internal struct (i.e.,
+    not ABI stable) that contains callbacks for device operations
+    beyond its type and identifier (e.g., copy buffers to or from
+    a device).
+    """
+
+class CSchema:
+    """Low-level ArrowSchema wrapper
+
+    This object is a literal wrapper around a read-only ArrowSchema. It provides field accessors
+    that return Python objects and handles the C Data interface lifecycle (i.e., initialized
+    ArrowSchema structures are always released).
+
+    See `nanoarrow.c_schema()` for construction and usage examples.
+    """
+
+class CSchemaView:
+    """Low-level ArrowSchemaView wrapper
+
+    This object is a literal wrapper around a read-only ArrowSchemaView. It provides field accessors
+    that return Python objects and handles structure lifecycle. Compared to an ArrowSchema,
+    the nanoarrow ArrowSchemaView facilitates access to the deserialized content of an ArrowSchema
+    (e.g., parameter values for parameterized types).
+
+    See `nanoarrow.c_schema_view()` for construction and usage examples.
+    """
+
+class CArray:
+    """Low-level ArrowArray wrapper
+
+    This object is a literal wrapper around a read-only ArrowArray. It provides field accessors
+    that return Python objects and handles the C Data interface lifecycle (i.e., initialized
+    ArrowArray structures are always released).
+
+    See `nanoarrow.c_array()` for construction and usage examples.
+    """
+
+class CArrayView:
+    """Low-level ArrowArrayView wrapper
+
+    This object is a literal wrapper around an ArrowArrayView. It provides field accessors
+    that return Python objects and handles the structure lifecycle (i.e., initialized
+    ArrowArrayView structures are always released).
+
+    See `nanoarrow.c_array_view()` for construction and usage examples.
+    """
 
 class SchemaMetadata:
-    __pyx_vtable__: ClassVar[PyCapsule] = ...
-    @classmethod
-    def __init__(cls, *args, **kwargs) -> None:
-        """Create and return a new object.  See help(type) for accurate signature."""
-    @staticmethod
-    def empty(*args, **kwargs): ...
-    def items(self, *args, **kwargs): ...
-    def keys(self, *args, **kwargs): ...
-    def values(self, *args, **kwargs): ...
-    def __contains__(self, other) -> bool:
-        """Return bool(key in self)."""
-    def __getitem__(self, index):
-        """Return self[key]."""
-    def __iter__(self):
-        """Implement iter(self)."""
-    def __len__(self) -> int:
-        """Return len(self)."""
-    def __reduce__(self): ...
+    """Wrapper for a lazily-parsed CSchema.metadata string"""
+
+class CBufferView:
+    """Wrapper for Array buffer content
+
+    This object is a Python wrapper around a buffer held by an Array.
+    It implements the Python buffer protocol and is best accessed through
+    another implementor (e.g., `np.array(array_view.buffers[1])`)). Note that
+    this buffer content does not apply any parent offset.
+    """
+
+class CBuffer:
+    """Wrapper around readable owned buffer content
+
+    Like the CBufferView, the CBuffer represents readable buffer content; however,
+    unlike the CBufferView, the CBuffer always represents a valid ArrowBuffer C object.
+    """
+
+class CBufferBuilder:
+    """Wrapper around writable CPU buffer content
+
+    This class provides a growable type-aware buffer that can be used
+    to create a typed buffer from a Python iterable. This method of
+    creating a buffer is usually slower than constructors like
+    ``array.array()`` or ``numpy.array()``; however, this class supports
+    all Arrow types with a single data buffer (e.g., boolean bitmaps,
+    float16, intervals, fixed-size binary), some of which are not supported
+    by other constructors.
+    """
+
+class NoneAwareWrapperIterator:
+    """Nullable iterator wrapper
+
+    This class wraps an iterable ``obj`` that might contain ``None`` values
+    such that the iterable provided by this class contains "empty" (but valid)
+    values. After ``obj`` has been completely consumed, one can call
+    ``finish()`` to obtain the resulting bitmap. This is useful for passing
+    iterables that might contain None to tools that cannot handle them
+    (e.g., struct.pack(), array.array()).
+    """
+
+    def finish(self):
+        """Obtain the total count, null count, and validity bitmap after
+        consuming this iterable."""
+
+class CArrayStream:
+    """Low-level ArrowArrayStream wrapper
+
+    This object is a literal wrapper around an ArrowArrayStream. It provides methods that
+    that wrap the underlying C callbacks and handles the C Data interface lifecycle
+    (i.e., initialized ArrowArrayStream structures are always released).
+
+    See `nanoarrow.c_array_stream()` for construction and usage examples.
+    """

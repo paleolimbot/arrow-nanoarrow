@@ -83,9 +83,13 @@ class Content:
 
         # Render children
         for child in self.children():
-            child.render(out)
+            if child.is_function() or child.is_class():
+                child.render(out)
 
-    def children(self, initial_level=-1):
+    def children(self, initial_level=1):
+        if self.is_function():
+            return
+
         for start, end in self._child_blocks(initial_level):
             start_pos = self._row_col_to_offset(start.start)
             end_pos = self._row_col_to_offset(end.end)
@@ -103,8 +107,25 @@ class Content:
         else:
             return None
 
-    def _child_blocks(self, initial_level=-1):
-        level = initial_level
+    def is_function(self):
+        for tok in self.tokens():
+            if tok.type == tokenize.NAME:
+                return tok.string == "def"
+
+        return False
+
+    def is_class(self):
+        for tok in self.tokens():
+            if tok.type == tokenize.NAME:
+                if tok.string == "cdef":
+                    continue
+                else:
+                    return tok.string == "class"
+
+        return False
+
+    def _child_blocks(self, initial_level=1):
+        level = 0
         def_start = None
         for tok in self.tokens():
             if tok.type in (tokenize.COMMENT, tokenize.NL):
@@ -112,7 +133,7 @@ class Content:
 
             # Save the start of the def/class (hopefully skipping variable definitions)
             if (
-                level == 0
+                level == initial_level
                 and tok.type == tokenize.NAME
                 and tok.string in ("def", "cdef", "cpdef", "class")
                 and (def_start is None or def_start.line != tok.line)
@@ -125,7 +146,7 @@ class Content:
                 level += 1
             elif tok.type == tokenize.DEDENT:
                 level -= 1
-                if level == 0:
+                if level == 0 and def_start is not None:
                     yield def_start, tok
 
     # The tokenizer gives us row/col, but we need the offset into the string
@@ -145,11 +166,13 @@ class Content:
             if not found_indent and tok.type == tokenize.INDENT:
                 found_indent = True
                 continue
-
-            if found_indent and tok.type == tokenize.STRING:
+            elif found_indent:
                 break
 
-        return tok
+        if tok.type == tokenize.STRING:
+            return tok
+        else:
+            return None
 
     def tokens(self):
         return tokenize.generate_tokens(io.StringIO(self._content).readline)
@@ -169,29 +192,28 @@ class Content:
             elif line[:n_spaces] == indent_str:
                 out_str.write(line[n_spaces:])
             else:
-                raise ValueError(f"line '{line}' is not indented by {n_spaces} spaces")
+                # Don't strip leading whitespace that is not whitespace
+                out_str.write(line)
 
         return out_str.getvalue()
 
 
-import io
+if __name__ == "__main__":
+    import sys
 
-f = Content(
-    """
-cdef class Foo:
-    \"\"\"This is a class docstring\"\"\"
+    # if len(sys.argv) != 2:
+    #     print("Usage:\n  python pxi_generator.py path/to/file.pyx\n")
+    #     sys.exit(1)
 
-    # This is a comment
-    def some_function(CythonType param1, param2: PythonType) -> OutTypeHint:
-        \"\"\"This is a docstring
+    # path_in = sys.argv[1]
+    path_in = "src/nanoarrow/_lib.pyx"
 
-        ...which contains content we'd like in the pyi file.
-        \"\"\"
-        print("this is a function")
+    path_out = path_in.replace(".pyx", ".pyi")
+    if path_in == path_out:
+        print(f"Input {path_in} is not a .pyx file!")
+        sys.exit(1)
 
-"""
-)
-
-out = io.StringIO()
-f.render(out)
-print(out.getvalue())
+    with open(path_in) as f_in, open(path_out, "w") as f_out:
+        mod = Content(f_in.read())
+        for child in mod.children(initial_level=0):
+            child.render(f_out)
