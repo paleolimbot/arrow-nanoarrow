@@ -17,6 +17,7 @@
 
 import io
 import tokenize
+import textwrap
 
 
 class Content:
@@ -25,18 +26,87 @@ class Content:
         self._indent = indent
         self._content = self._unindent(content, indent)
 
-    def children(self):
-        for start, end in self._child_blocks():
+    def render(self, out):
+        docstring = self.find_docstring()
+
+        # Only render if this is documented
+        if not docstring:
+            return
+
+        out_tokens = []
+        for tok_type, tok_val, _, _, _ in self.tokens():
+            # Skip any comments
+            if tok_type == tokenize.COMMENT:
+                continue
+
+            # Append the token
+            out_tokens.append((tok_type, tok_val))
+
+            # We only need until the actual indent happens
+            if tok_type == tokenize.INDENT:
+                break
+
+        # Because of the next loop, put a dummy token at the end
+        out_tokens.append((tokenize.NAME, "..."))
+
+        # One more pass to transform `cdef class` -> `class` and
+        # `Type param` -> `param: Type`
+        out_tokens_trans = []
+        for i in range(0, len(out_tokens) - 1):
+            tok_type0, tok_val0 = out_tokens[i]
+            tok_type, tok_val = out_tokens[i + 1]
+
+            if tok_type0 == tokenize.NAME and tok_type == tokenize.NAME:
+                if tok_val0 == "cdef" and tok_val == "class":
+                    # cdef class -> class
+                    continue
+
+                elif tok_val0 in ("def", "class"):
+                    #
+                    out_tokens_trans.append((tok_type0, tok_val0))
+                else:
+                    out_tokens_trans.extend(
+                        [
+                            (tokenize.NAME, tok_val),
+                            (tokenize.OP, ":"),
+                            (tokenize.NAME, tok_val0),
+                        ]
+                    )
+            else:
+                out_tokens_trans.append((tok_type0, tok_val0))
+
+        # Add the docstring and render
+        out_tokens_trans.append((tokenize.STRING, docstring))
+        out_str = tokenize.untokenize(out_tokens_trans)
+        out.write(textwrap.indent(out_str, " " * self._indent))
+        out.write("\n\n")
+
+        # Render children
+        for child in self.children():
+            child.render(out)
+
+    def children(self, initial_level=-1):
+        for start, end in self._child_blocks(initial_level):
             start_pos = self._row_col_to_offset(start.start)
             end_pos = self._row_col_to_offset(end.end)
 
             start_indent = start.start[1]
-            yield Content(self._content[start_pos:end_pos], start_indent)
+            start_indent_str = " " * start_indent
+            yield Content(
+                start_indent_str + self._content[start_pos:end_pos], start_indent
+            )
 
-    def _child_blocks(self):
-        level = 0
+    def find_docstring(self):
+        tok = self._find_next_docstring()
+        if tok is not None:
+            return tok.string
+        else:
+            return None
+
+    def _child_blocks(self, initial_level=-1):
+        level = initial_level
         def_start = None
-        for tok in tokenize.generate_tokens(io.StringIO(self._content).readline):
+        for tok in self.tokens():
             if tok.type in (tokenize.COMMENT, tokenize.NL):
                 continue
 
@@ -68,7 +138,7 @@ class Content:
 
     def _find_next_docstring(self):
         found_indent = False
-        for tok in tokenize.generate_tokens(io.StringIO(self._content).readline):
+        for tok in self.tokens():
             if tok.type in (tokenize.COMMENT, tokenize.NL):
                 continue
 
@@ -80,6 +150,9 @@ class Content:
                 break
 
         return tok
+
+    def tokens(self):
+        return tokenize.generate_tokens(io.StringIO(self._content).readline)
 
     def _unindent(self, content, n_spaces):
         if n_spaces == 0:
@@ -101,59 +174,24 @@ class Content:
         return out_str.getvalue()
 
 
-content = """
+import io
 
-# This is a comment
-cpdef some_function(CythonType param1, param2: PythonType) -> OutTypeHint:
-    \"\"\"This is a docstring
+f = Content(
+    """
+cdef class Foo:
+    \"\"\"This is a class docstring\"\"\"
 
-    ...which contains content we'd like in the pyi file.
-    \"\"\"
-    print("this is a function")
+    # This is a comment
+    def some_function(CythonType param1, param2: PythonType) -> OutTypeHint:
+        \"\"\"This is a docstring
 
-
-cdef class SomeClass:
-    \"\"\"This is the documentation for SomeClass
-
-    Here is a second paragraph
-    \"\"\"
-
-    # Another comment that might be anywhere
-    def some_method(self, some_param: HintedType, CythonType some_other_param) -> OutType:
-        \"\"\"This is a method
-
-        ...that contains a mix of Python-style and Cython-style type hints
-        and a docstring.
+        ...which contains content we'd like in the pyi file.
         \"\"\"
-        print("this is a method")
-
-    # A comment that is not properly indented
-    def some_other_method(self):
-        pass
-
-    @staticmethod
-    def a_static_method():
-        pass
-
-    @classmethod
-    def a_class_method(cls):
-        pass
-
-
-cdef class SomeSubClass(SomeClass):
-    \"\"\"This is the documentation for a subclass
-
-    ...we don't need any stubs for superclass methods but we do need
-
-    \"\"\"
-    def some_subclass_method(self):
-        pass
+        print("this is a function")
 
 """
+)
 
-
-c = Content(content)
-for item in c.children():
-    print("-" * 30)
-    print(item._content)
-    print("-" * 30)
+out = io.StringIO()
+f.render(out)
+print(out.getvalue())
