@@ -16,12 +16,11 @@
 # under the License.
 
 import io
-import tokenize
 import textwrap
+import tokenize
 
 
 class Content:
-
     def __init__(self, content, indent=0) -> None:
         self._indent = indent
         self._content = self._unindent(content, indent)
@@ -67,9 +66,12 @@ class Content:
                     continue
 
                 elif tok_val0 in ("def", "class"):
-                    #
                     out_tokens_trans.append((tok_type0, tok_val0))
                 else:
+                    # Handle C types like int64_t
+                    if tok_val0 in _TYPE_REPLACEMENTS:
+                        tok_val0 = _TYPE_REPLACEMENTS[tok_val0]
+
                     out_tokens_trans.extend(
                         [
                             (tokenize.NAME, tok_val),
@@ -115,6 +117,8 @@ class Content:
 
     def is_function(self):
         for tok in self.tokens():
+            if tok.type == tokenize.OP and tok.line.strip().endswith("staticmethod"):
+                return True
             if tok.type == tokenize.NAME:
                 return tok.string == "def"
 
@@ -145,15 +149,25 @@ class Content:
                 level -= 1
                 if level == initial_level and def_start is not None:
                     yield def_start, tok
+                    def_start = None
 
-            # Save the start of the def/class (hopefully skipping variable definitions)
-            if (
-                level == initial_level
-                and tok.type == tokenize.NAME
-                and tok.string in ("def", "cdef", "cpdef", "class")
-                and ("(" in tok.line or ":" in tok.line)
-                and (def_start is None or def_start.line != tok.line)
-            ):
+            if level != initial_level:
+                continue
+
+            # Save the start of the def/class. We need decorators here but not
+            # variable definitions.
+            if tok.type == tokenize.NAME:
+                if (
+                    tok.string in ("def", "cdef", "cpdef", "class")
+                    and ("(" in tok.line or ":" in tok.line)
+                    and (
+                        def_start is None
+                        or (def_start.string != "@" and def_start.line != tok.line)
+                    )
+                ):
+                    def_start = tok
+
+            if tok.type == tokenize.OP and tok.line.strip().endswith("staticmethod"):
                 def_start = tok
 
     # The tokenizer gives us row/col, but we need the offset into the string
@@ -205,22 +219,38 @@ class Content:
         return out_str.getvalue()
 
 
+_TYPE_REPLACEMENTS = {"int64_t": "int", "ArrowType": "int"}
+_LICENSE = """
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+"""
+
+
 if __name__ == "__main__":
-    import sys
-
-    # if len(sys.argv) != 2:
-    #     print("Usage:\n  python pxi_generator.py path/to/file.pyx\n")
-    #     sys.exit(1)
-
-    # path_in = sys.argv[1]
     path_in = "src/nanoarrow/_lib.pyx"
-
     path_out = path_in.replace(".pyx", ".pyi")
-    if path_in == path_out:
-        print(f"Input {path_in} is not a .pyx file!")
-        sys.exit(1)
 
     with open(path_in) as f_in, open(path_out, "w") as f_out:
+        f_out.write(_LICENSE)
+        f_out.write("\n\n")
+
+        f_out.write("from enum import Enum\n\n")
+
         mod = Content(f_in.read())
         for child in mod.children(initial_level=0):
-            child.render(f_out)
+            if child.is_function() or child.is_class():
+                child.render(f_out)
