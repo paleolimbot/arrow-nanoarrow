@@ -52,7 +52,12 @@ class Content:
         # One more pass to transform `cdef class` -> `class` and
         # `Type param` -> `param: Type`
         out_tokens_trans = []
+        skip_next = False
         for i in range(0, len(out_tokens) - 1):
+            if skip_next:
+                skip_next = False
+                continue
+
             tok_type0, tok_val0 = out_tokens[i]
             tok_type, tok_val = out_tokens[i + 1]
 
@@ -72,6 +77,7 @@ class Content:
                             (tokenize.NAME, tok_val0),
                         ]
                     )
+                    skip_next = True
             else:
                 out_tokens_trans.append((tok_type0, tok_val0))
 
@@ -131,23 +137,24 @@ class Content:
             if tok.type in (tokenize.COMMENT, tokenize.NL):
                 continue
 
-            # Save the start of the def/class (hopefully skipping variable definitions)
-            if (
-                level == initial_level
-                and tok.type == tokenize.NAME
-                and tok.string in ("def", "cdef", "cpdef", "class")
-                and (def_start is None or def_start.line != tok.line)
-            ):
-                def_start = tok
-
-            # Keep track of indentation level and stop iterating when we get back
+            # Keep track of indentation level and yield when we get back
             # to a zero indentation level
             if tok.type == tokenize.INDENT:
                 level += 1
             elif tok.type == tokenize.DEDENT:
                 level -= 1
-                if level == 0 and def_start is not None:
+                if level == initial_level and def_start is not None:
                     yield def_start, tok
+
+            # Save the start of the def/class (hopefully skipping variable definitions)
+            if (
+                level == initial_level
+                and tok.type == tokenize.NAME
+                and tok.string in ("def", "cdef", "cpdef", "class")
+                and ("(" in tok.line or ":" in tok.line)
+                and (def_start is None or def_start.line != tok.line)
+            ):
+                def_start = tok
 
     # The tokenizer gives us row/col, but we need the offset into the string
     def _row_col_to_offset(self, row_and_col):
