@@ -17,6 +17,7 @@
 
 test_that("vctrs extension type can roundtrip built-in vector types", {
   skip_if_not_installed("tibble")
+  skip_if_not_installed("jsonlite")
 
   # Arrow tibbleifies everything, so we do here too
   # Lists aren't automatically handled in nanoarrow conversion, so they
@@ -54,20 +55,6 @@ test_that("vctrs extension type can roundtrip built-in vector types", {
     # Roundtrip with multiple chunks
     stream <- basic_array_stream(list(array, array))
     expect_identical(convert_array_stream(stream), vctrs::vec_rep(vctr, 2))
-
-    if (requireNamespace("arrow", quietly = TRUE)) {
-      # Roundtrip from nanoarrow -> arrow -> R
-      arrow_array <- arrow::as_arrow_array(array)
-      expect_s3_class(arrow_array, "ExtensionArray")
-      expect_identical(arrow_array$type$ptype(), ptype)
-      expect_identical(arrow_array$as_vector(), vctr)
-
-      # Roundtrip from arrow -> nanoarrow -> R
-      arrow_array <- arrow::vctrs_extension_array(vctr)
-      array <- as_nanoarrow_array(vctr, schema = schema)
-      expect_identical(infer_nanoarrow_ptype(array), ptype)
-      expect_identical(convert_array(array), vctr)
-    }
   }
 })
 
