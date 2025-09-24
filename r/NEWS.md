@@ -17,6 +17,11 @@
   under the License.
 -->
 
+# nanoarrow 0.7.0-1
+
+- Fix bug where a shallow copy could not be created from string view arrays
+  (#808).
+
 # nanoarrow 0.7.0
 
 - Add zstd decompression support to R package (#733)
