@@ -1,6 +1,6 @@
 Package: nanoarrow
 Title: Interface to the 'nanoarrow' 'C' Library
-Version: 0.7.0-1
+Version: 0.7.0-2
 Authors@R: c(
     person(given = "Dewey",
            family = "Dunnington",
