@@ -21,7 +21,7 @@ Resolves the default \code{to} value to use in \code{\link[=convert_array]{conve
 }
 \details{
 \itemize{
-\item null to \code{\link[vctrs:unspecified]{vctrs::unspecified()}}
+\item null to \code{\link[vctrs:vctrs-unspecified]{vctrs::unspecified()}}
 \item boolean to \code{\link[=logical]{logical()}}
 \item int8, uint8, int16, uint16, and int13 to \code{\link[=integer]{integer()}}
 \item uint32, int64, uint64, float, and double to \code{\link[=double]{double()}}
